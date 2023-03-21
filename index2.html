@@ -11,7 +11,7 @@
 
   <script>
     // Hace una llamada HTTP GET al endpoint para obtener las publicaciones de un usuario
-    fetch('https://www.reddit.com/user/TU_NOMBRE_DE_USUARIO/submitted.json')
+    fetch('https://www.reddit.com/user/lizanfeet/submitted.json')
       .then(response => response.json())
       .then(posts => {
         posts = posts.data.children.filter(post => post.data.score > 0).sort((a, b) => b.data.score - a.data.score);
