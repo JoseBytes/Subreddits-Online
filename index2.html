@@ -8,79 +8,66 @@
       width: 100%;
       height: auto;
     }
-    #canvas {
-      display: none;
-    }
     #overlay {
       position: absolute;
       border: 5px solid #0f0;
       box-sizing: border-box;
+      display: none;
     }
   </style>
 </head>
 <body>
   <div>
     <video id="video" autoplay></video>
-    <canvas id="canvas"></canvas>
     <div id="overlay"></div>
   </div>
   <div>
     <p>Resultado:</p>
     <p id="qrResult"></p>
   </div>
-  
-  <!-- Agrega el script de jsQR a través de un CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
-  
+
+  <!-- Agrega la biblioteca ZXing a través de un CDN -->
+  <script src="https://unpkg.com/@zxing/library@0.18.5"></script>
+
   <script>
     const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
     const overlay = document.getElementById('overlay');
     const qrResult = document.getElementById('qrResult');
-    
+
     // Accede a la cámara del dispositivo
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
       .then(function(stream) {
         video.srcObject = stream;
         video.play();
+
+        // Crea el objeto de escaneo con ZXing
+        const codeReader = new ZXing.BrowserQRCodeReader();
+
+        // Agrega un listener al video para detectar códigos QR en tiempo real
+        video.addEventListener('canplay', function() {
+          // Repite el proceso cada cierto tiempo
+          setInterval(function() {
+            // Analiza los datos de la imagen y detecta códigos QR
+            codeReader.decodeFromVideoDevice(undefined, 'video')
+              .then(result => {
+                // Si se detecta un código QR, muestra el resultado y el encuadre
+                qrResult.textContent = result.text;
+                overlay.style.display = 'block';
+                overlay.style.left = result.location.topLeftCorner.x + 'px';
+                overlay.style.top = result.location.topLeftCorner.y + 'px';
+                overlay.style.width = result.location.topRightCorner.x - result.location.topLeftCorner.x + 'px';
+                overlay.style.height = result.location.bottomRightCorner.y - result.location.topRightCorner.y + 'px';
+              })
+              .catch(err => {
+                // Si no se detecta un código QR, oculta el encuadre
+                overlay.style.display = 'none';
+              });
+          }, 500); // Puedes ajustar el intervalo de tiempo según tus necesidades
+        });
       })
       .catch(function(error) {
         console.log('Error al acceder a la cámara: ' + error);
       });
-      
-    // Agrega un listener al video para detectar códigos QR en tiempo real
-    video.addEventListener('play', function() {
-      const width = video.videoWidth;
-      const height = video.videoHeight;
-      canvas.width = width;
-      canvas.height = height;
-      
-      // Repite el proceso cada cierto tiempo
-      setInterval(function() {
-        // Dibuja la imagen en el canvas
-        canvas.getContext('2d').drawImage(video, 0, 0, width, height);
-        
-        // Analiza los datos de la imagen y detecta códigos QR
-        const imageData = canvas.getContext('2d').getImageData(0, 0, width, height);
-        const code = jsQR(imageData.data, imageData.width, imageData.height, {
-          inversionAttempts: 'dontInvert',
-        });
-        
-        if (code) {
-          // Si se detecta un código QR, muestra el resultado y el encuadre
-          qrResult.textContent = code.data;
-          overlay.style.display = 'block';
-          overlay.style.left = code.location.topLeftCorner.x + 'px';
-          overlay.style.top = code.location.topLeftCorner.y + 'px';
-          overlay.style.width = code.location.topRightCorner.x - code.location.topLeftCorner.x + 'px';
-          overlay.style.height = code.location.bottomRightCorner.y - code.location.topRightCorner.y + 'px';
-        } else {
-          // Si no se detecta un código QR, oculta el encuadre
-          overlay.style.display = 'none';
-        }
-      }, 500); // Puedes ajustar el intervalo de tiempo según tus necesidades
-    });
   </script>
 </body>
-
 </html>
