@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Escaneo de código QR</title>
+  <title>Detección automática de código QR</title>
   <style>
     #video {
       width: 100%;
@@ -26,8 +26,9 @@
     <p id="qrResult"></p>
   </div>
 
-  <!-- Agrega la biblioteca ZXing a través de un CDN -->
+  <!-- Agrega las bibliotecas necesarias a través de CDN -->
   <script src="https://unpkg.com/@zxing/library@0.18.5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.18.5"></script>
 
   <script>
     const video = document.getElementById('video');
@@ -43,26 +44,23 @@
         // Crea el objeto de escaneo con ZXing
         const codeReader = new ZXing.BrowserQRCodeReader();
 
-        // Agrega un listener al video para detectar códigos QR en tiempo real
-        video.addEventListener('canplay', function() {
-          // Repite el proceso cada cierto tiempo
-          setInterval(function() {
-            // Analiza los datos de la imagen y detecta códigos QR
-            codeReader.decodeFromVideoDevice(undefined, 'video')
-              .then(result => {
-                // Si se detecta un código QR, muestra el resultado y el encuadre
-                qrResult.textContent = result.text;
-                overlay.style.display = 'block';
-                overlay.style.left = result.location.topLeftCorner.x + 'px';
-                overlay.style.top = result.location.topLeftCorner.y + 'px';
-                overlay.style.width = result.location.topRightCorner.x - result.location.topLeftCorner.x + 'px';
-                overlay.style.height = result.location.bottomRightCorner.y - result.location.topRightCorner.y + 'px';
-              })
-              .catch(err => {
-                // Si no se detecta un código QR, oculta el encuadre
-                overlay.style.display = 'none';
-              });
-          }, 500); // Puedes ajustar el intervalo de tiempo según tus necesidades
+        // Detecta los códigos QR automáticamente
+        codeReader.decodeOnceFromVideoDevice(undefined, 'video', (result, error) => {
+          if (result) {
+            // Si se detecta un código QR, muestra el resultado y el encuadre
+            qrResult.textContent = result.text;
+            overlay.style.display = 'block';
+            overlay.style.left = result.location.topLeftCorner.x + 'px';
+            overlay.style.top = result.location.topLeftCorner.y + 'px';
+            overlay.style.width = result.location.topRightCorner.x - result.location.topLeftCorner.x + 'px';
+            overlay.style.height = result.location.bottomRightCorner.y - result.location.topRightCorner.y + 'px';
+          } else {
+            // Si no se detecta un código QR, oculta el encuadre
+            overlay.style.display = 'none';
+          }
+
+          // Vuelve a detectar los códigos QR automáticamente
+          codeReader.decodeOnceFromVideoDevice(undefined, 'video', (result, error) => {});
         });
       })
       .catch(function(error) {
