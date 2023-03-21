@@ -2,70 +2,43 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Detección automática de código QR</title>
-  <style>
-    #video {
-      width: 100%;
-      height: auto;
-    }
-    #overlay {
-      position: absolute;
-      border: 5px solid #0f0;
-      box-sizing: border-box;
-      display: none;
-    }
-  </style>
+  <title>Mis publicaciones con más votos en Reddit</title>
 </head>
 <body>
-  <div>
-    <video id="video" autoplay></video>
-    <div id="overlay"></div>
-  </div>
-  <div>
-    <p>Resultado:</p>
-    <p id="qrResult"></p>
+  <div id="publicaciones">
+    <h1>Mis publicaciones con más votos en Reddit</h1>
   </div>
 
   <!-- Agrega las bibliotecas necesarias a través de CDN -->
-  <script src="https://unpkg.com/@zxing/library@0.18.5"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.18.5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/snoowrap"></script>
 
   <script>
-    const video = document.getElementById('video');
-    const overlay = document.getElementById('overlay');
-    const qrResult = document.getElementById('qrResult');
+    // Crea un objeto de autenticación con tu cuenta de Reddit
+    const r = new snoowrap({
+      userAgent: 'feets2',
+      clientId: 'K0MBaIdwAz2-O6i1XXmXzA',
+      clientSecret: 'qHPfrFhVvboVwvdYTbxfN9nJfspgRQ',
+      username: 'lizanfeet',
+      password: 'Viviana08*'
+    });
 
-    // Accede a la cámara del dispositivo
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-      .then(function(stream) {
-        video.srcObject = stream;
-        video.play();
+    // Obtiene las publicaciones de tu cuenta ordenadas por número de votos
+    r.getUser('me').getOverview({ limit: 100 }).then(posts => {
+      posts = posts.filter(post => post.score > 0).sort((a, b) => b.score - a.score);
 
-        // Crea el objeto de escaneo con ZXing
-        const codeReader = new ZXing.BrowserQRCodeReader();
-
-        // Detecta los códigos QR automáticamente
-        codeReader.decodeOnceFromVideoDevice(undefined, 'video', (result, error) => {
-          if (result) {
-            // Si se detecta un código QR, muestra el resultado y el encuadre
-            qrResult.textContent = result.text;
-            overlay.style.display = 'block';
-            overlay.style.left = result.location.topLeftCorner.x + 'px';
-            overlay.style.top = result.location.topLeftCorner.y + 'px';
-            overlay.style.width = result.location.topRightCorner.x - result.location.topLeftCorner.x + 'px';
-            overlay.style.height = result.location.bottomRightCorner.y - result.location.topRightCorner.y + 'px';
-          } else {
-            // Si no se detecta un código QR, oculta el encuadre
-            overlay.style.display = 'none';
-          }
-
-          // Vuelve a detectar los códigos QR automáticamente
-          codeReader.decodeOnceFromVideoDevice(undefined, 'video', (result, error) => {});
-        });
-      })
-      .catch(function(error) {
-        console.log('Error al acceder a la cámara: ' + error);
+      // Crea un elemento de lista para cada publicación y agrega al DOM
+      const publicaciones = document.getElementById('publicaciones');
+      const lista = document.createElement('ul');
+      publicaciones.appendChild(lista);
+      posts.forEach(post => {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = 'https://www.reddit.com' + post.permalink;
+        link.textContent = post.title + ' (' + post.score + ' votos)';
+        item.appendChild(link);
+        lista.appendChild(item);
       });
+    });
   </script>
 </body>
 </html>
