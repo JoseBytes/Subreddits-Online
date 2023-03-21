@@ -9,29 +9,26 @@
     <h1>Mis publicaciones con más votos en Reddit</h1>
   </div>
 
-  <!-- Agrega las bibliotecas necesarias a través de CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/snoowrap"></script>
-
   <script>
-    
+    // Hace una llamada HTTP GET al endpoint para obtener las publicaciones de un usuario
+    fetch('https://www.reddit.com/user/TU_NOMBRE_DE_USUARIO/submitted.json')
+      .then(response => response.json())
+      .then(posts => {
+        posts = posts.data.children.filter(post => post.data.score > 0).sort((a, b) => b.data.score - a.data.score);
 
-    // Obtiene las publicaciones de tu cuenta ordenadas por número de votos
-    r.getUser('me').getOverview({ limit: 100 }).then(posts => {
-      posts = posts.filter(post => post.score > 0).sort((a, b) => b.score - a.score);
-
-      // Crea un elemento de lista para cada publicación y agrega al DOM
-      const publicaciones = document.getElementById('publicaciones');
-      const lista = document.createElement('ul');
-      publicaciones.appendChild(lista);
-      posts.forEach(post => {
-        const item = document.createElement('li');
-        const link = document.createElement('a');
-        link.href = 'https://www.reddit.com' + post.permalink;
-        link.textContent = post.title + ' (' + post.score + ' votos)';
-        item.appendChild(link);
-        lista.appendChild(item);
+        // Crea un elemento de lista para cada publicación y agrega al DOM
+        const publicaciones = document.getElementById('publicaciones');
+        const lista = document.createElement('ul');
+        publicaciones.appendChild(lista);
+        posts.forEach(post => {
+          const item = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = 'https://www.reddit.com' + post.data.permalink;
+          link.textContent = post.data.title + ' (' + post.data.score + ' votos)';
+          item.appendChild(link);
+          lista.appendChild(item);
+        });
       });
-    });
   </script>
 </body>
 </html>
