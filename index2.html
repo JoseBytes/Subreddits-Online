@@ -13,14 +13,7 @@
   <script src="https://cdn.jsdelivr.net/npm/snoowrap"></script>
 
   <script>
-    // Crea un objeto de autenticación con tu cuenta de Reddit
-    const r = new snoowrap({
-      userAgent: 'feets2',
-      clientId: 'K0MBaIdwAz2-O6i1XXmXzA',
-      clientSecret: 'qHPfrFhVvboVwvdYTbxfN9nJfspgRQ',
-      username: 'lizanfeet',
-      password: 'Viviana08*'
-    });
+    
 
     // Obtiene las publicaciones de tu cuenta ordenadas por número de votos
     r.getUser('me').getOverview({ limit: 100 }).then(posts => {
