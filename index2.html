@@ -1,41 +1,52 @@
-<!-- Agrega esto en tu archivo HTML -->
-<div>
-  <video id="video" width="100%" height="auto" autoplay></video>
-</div>
-<div>
-  <p>Resultado:</p>
-  <p id="qrResult"></p>
-</div>
-
-<script>
-  const video = document.getElementById('video');
-  const qrResult = document.getElementById('qrResult');
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Escaneo de código QR</title>
+</head>
+<body>
+  <div>
+    <video id="video" width="100%" height="auto" autoplay></video>
+  </div>
+  <div>
+    <p>Resultado:</p>
+    <p id="qrResult"></p>
+  </div>
   
-  // Accede a la cámara del dispositivo
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-    .then(function(stream) {
-      video.srcObject = stream;
-      video.play();
-    })
-    .catch(function(error) {
-      console.log('Error al acceder a la cámara: ' + error);
+  <!-- Agrega el script de ZXing a través de un CDN -->
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  
+  <script>
+    const video = document.getElementById('video');
+    const qrResult = document.getElementById('qrResult');
+    
+    // Accede a la cámara del dispositivo
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(function(stream) {
+        video.srcObject = stream;
+        video.play();
+      })
+      .catch(function(error) {
+        console.log('Error al acceder a la cámara: ' + error);
+      });
+      
+    // Agrega un listener al video para detectar códigos QR en tiempo real
+    video.addEventListener('play', function() {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      // Repite el proceso cada cierto tiempo
+      setInterval(function() {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const qrCode = zxing.read(imageData);
+        if (qrCode) {
+          qrResult.textContent = qrCode;
+        }
+      }, 500); // Puedes ajustar el intervalo de tiempo según tus necesidades
     });
-    
-  // Agrega un listener al video para detectar códigos QR en tiempo real
-  video.addEventListener('play', function() {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    
-    // Repite el proceso cada cierto tiempo
-    setInterval(function() {
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-      const qrCode = zxing.read(imageData);
-      if (qrCode) {
-        qrResult.textContent = qrCode;
-      }
-    }, 500); // Puedes ajustar el intervalo de tiempo según tus necesidades
-  });
-</script>
+  </script>
+</body>
+</html>
