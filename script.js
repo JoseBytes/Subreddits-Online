@@ -18,7 +18,7 @@ Promise.all(promises).then(results => {
   results.sort((a, b) => b.onlineUsers - a.onlineUsers);
   results.forEach(result => {
     const listItem = document.createElement('li');
-    listItem.textContent = `${result.subreddit}: ${result.onlineUsers} usuarios en línea`;
+    listItem.textContent = `${result.subreddit}: ${result.onlineUsers} online`;
     if (result.onlineUsers > 400) {
       listItem.style.color = 'green';
     }
