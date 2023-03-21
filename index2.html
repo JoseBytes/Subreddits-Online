@@ -11,7 +11,7 @@
 
   <script>
     // Hace una llamada HTTP GET al endpoint para obtener las publicaciones de un usuario
-    fetch('https://www.reddit.com/user/lizanfeet/submitted.json')
+    fetch('https://www.reddit.com/user/TU_NOMBRE_DE_USUARIO/submitted.json')
       .then(response => response.json())
       .then(posts => {
         posts = posts.data.children.filter(post => post.data.score > 0).sort((a, b) => b.data.score - a.data.score);
@@ -22,10 +22,13 @@
         publicaciones.appendChild(lista);
         posts.forEach(post => {
           const item = document.createElement('li');
-          const link = document.createElement('a');
-          link.href = 'https://www.reddit.com' + post.data.permalink;
-          link.textContent = post.data.title + ' (' + post.data.score + ' votos)';
-          item.appendChild(link);
+          const titleLink = document.createElement('a');
+          titleLink.href = 'https://www.reddit.com' + post.data.permalink;
+          titleLink.textContent = post.data.title;
+          const infoSpan = document.createElement('span');
+          infoSpan.textContent = ` (${post.data.score} votos, publicado en ${post.data.subreddit} el ${new Date(post.data.created_utc * 1000).toLocaleString()})`;
+          item.appendChild(titleLink);
+          item.appendChild(infoSpan);
           lista.appendChild(item);
         });
       });
