@@ -3,21 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <title>Escaneo de código QR</title>
+  <style>
+    #video {
+      width: 100%;
+      height: auto;
+    }
+    #canvas {
+      display: none;
+    }
+    #overlay {
+      position: absolute;
+      border: 5px solid #0f0;
+      box-sizing: border-box;
+    }
+  </style>
 </head>
 <body>
   <div>
-    <video id="video" width="100%" height="auto" autoplay></video>
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+    <div id="overlay"></div>
   </div>
   <div>
     <p>Resultado:</p>
     <p id="qrResult"></p>
   </div>
   
-  <!-- Agrega el script de ZXing a través de un CDN -->
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <!-- Agrega el script de jsQR a través de un CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
   
   <script>
     const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const overlay = document.getElementById('overlay');
     const qrResult = document.getElementById('qrResult');
     
     // Accede a la cámara del dispositivo
@@ -32,21 +50,37 @@
       
     // Agrega un listener al video para detectar códigos QR en tiempo real
     video.addEventListener('play', function() {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      const width = video.videoWidth;
+      const height = video.videoHeight;
+      canvas.width = width;
+      canvas.height = height;
       
       // Repite el proceso cada cierto tiempo
       setInterval(function() {
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-        const qrCode = zxing.read(imageData);
-        if (qrCode) {
-          qrResult.textContent = qrCode;
+        // Dibuja la imagen en el canvas
+        canvas.getContext('2d').drawImage(video, 0, 0, width, height);
+        
+        // Analiza los datos de la imagen y detecta códigos QR
+        const imageData = canvas.getContext('2d').getImageData(0, 0, width, height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+          inversionAttempts: 'dontInvert',
+        });
+        
+        if (code) {
+          // Si se detecta un código QR, muestra el resultado y el encuadre
+          qrResult.textContent = code.data;
+          overlay.style.display = 'block';
+          overlay.style.left = code.location.topLeftCorner.x + 'px';
+          overlay.style.top = code.location.topLeftCorner.y + 'px';
+          overlay.style.width = code.location.topRightCorner.x - code.location.topLeftCorner.x + 'px';
+          overlay.style.height = code.location.bottomRightCorner.y - code.location.topRightCorner.y + 'px';
+        } else {
+          // Si no se detecta un código QR, oculta el encuadre
+          overlay.style.display = 'none';
         }
       }, 500); // Puedes ajustar el intervalo de tiempo según tus necesidades
     });
   </script>
 </body>
+
 </html>
