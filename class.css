@@ -1,1 +1,50 @@
+.subreddits {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+}
+
+.subreddit {
+
+  margin: 10px;
+
+  padding: 10px;
+
+  border: 1px solid #ccc;
+
+  border-radius: 5px;
+
+  min-width: 200px;
+
+}
+
+.subreddit-name {
+
+  font-size: 20px;
+
+  font-weight: bold;
+
+}
+
+.subreddit-users {
+
+  font-size: 16px;
+
+  margin-top: 5px;
+
+}
+
+.green {
+
+  color: green;
+
+}
+
+.red {
+
+  color: red;
+
+}
 
