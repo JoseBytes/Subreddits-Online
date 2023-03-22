@@ -30,6 +30,58 @@
         font-size: 14px;
       }
     }
+
+    .menu-container {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 9999;
+}
+
+#menu-button {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+#menu-button i {
+  font-size: 20px;
+  color: #333;
+}
+
+#menu {
+  display: none;
+  position: absolute;
+  top: 70px;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+#menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#menu li {
+  padding: 10px;
+}
+
+#menu li:hover {
+  background-color: #f1f1f1;
+}
+
+#menu a {
+  color: #333;
+  text-decoration: none;
+}
+
   </style>
 </head>
 <body>
