@@ -49,28 +49,6 @@ nav li a:hover {
   padding: 14px 16px;
 }
 
-/* Estilos para el menú desplegable */
-nav .dropdown-menu {
-  display: none;
-  position: absolute;
-  top: 60px;
-  left: 0;
-  width: 100%;
-  background-color: #333;
-  z-index: 99;
-}
-
-nav .dropdown-menu li {
-  display: block;
-  margin: 0;
-}
-
-nav .dropdown-menu li a {
-  display: block;
-  color: white;
-  padding: 14px 16px;
-}
-
 /* Estilos para dispositivos móviles */
 @media screen and (max-width: 767px) {
   nav ul {
@@ -81,20 +59,16 @@ nav .dropdown-menu li a {
     display: block;
   }
 
-  .fixed-nav.active ul {
+  .menu-toggle.active ~ ul {
     display: block;
-  }
-
-  nav .dropdown-menu {
-    position: static;
   }
 }
 
 </style>
   </head>
   <body>
-    <header>
-  <nav class="fixed-nav">
+<header>
+  <nav>
     <div class="menu-toggle"><i class="fa fa-bars"></i></div>
     <ul>
       <li><a href="#">Inicio</a></li>
@@ -107,7 +81,6 @@ nav .dropdown-menu li a {
 <main>
   <!-- Contenido de la página aquí -->
 </main>
-
   </body>
 </html>
 
