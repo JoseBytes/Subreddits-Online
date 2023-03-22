@@ -40,18 +40,62 @@ nav li a:hover {
   background-color: #111;
 }
 
-/* Estilos para el contenido principal de la página */
-main {
-  margin-top: 60px; /* Ajustar según el tamaño de la barra de navegación */
-  padding: 20px;
+/* Estilos para el botón de menú */
+.menu-toggle {
+  display: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 14px 16px;
 }
 
+/* Estilos para el menú desplegable */
+nav .dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  z-index: 99;
+}
+
+nav .dropdown-menu li {
+  display: block;
+  margin: 0;
+}
+
+nav .dropdown-menu li a {
+  display: block;
+  color: white;
+  padding: 14px 16px;
+}
+
+/* Estilos para dispositivos móviles */
+@media screen and (max-width: 767px) {
+  nav ul {
+    display: none;
+  }
+  
+  .menu-toggle {
+    display: block;
+  }
+
+  .fixed-nav.active ul {
+    display: block;
+  }
+
+  nav .dropdown-menu {
+    position: static;
+  }
+}
 
 </style>
   </head>
   <body>
     <header>
   <nav class="fixed-nav">
+    <div class="menu-toggle"><i class="fa fa-bars"></i></div>
     <ul>
       <li><a href="#">Inicio</a></li>
       <li><a href="#">Servicios</a></li>
