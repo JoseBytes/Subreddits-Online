@@ -58,7 +58,7 @@
   top: 10px;
   left: 60px;
   background-color: #fff;
-  border: 1px solid #ddd;
+  border: none; /* Eliminar el borde del menú */
   border-radius: 3px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
@@ -73,6 +73,11 @@
 #menu li {
   padding: 10px;
   display: inline-block; /* Agregar esto para mostrar los elementos de la lista en línea */
+  margin-right: 10px; /* Agregar un margen derecho para el espaciado entre los elementos de la lista */
+}
+
+#menu li:last-child {
+  margin-right: 0; /* Eliminar el margen derecho para el último elemento de la lista */
 }
 
 #menu li:hover {
@@ -82,7 +87,16 @@
 #menu a {
   color: #333;
   text-decoration: none;
+  border: none; /* Eliminar el borde de los enlaces */
 }
+
+.horizontal-bar {
+  background-color: #ddd; /* Cambiar el color del contenedor de la barra horizontal a gris */
+  height: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 
   </style>
 </head>
