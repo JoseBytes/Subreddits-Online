@@ -4,174 +4,66 @@
     <title>Publicar en múltiples subreddits</title>
     <script src="https://cdn.jsdelivr.net/npm/snoowrap@latest/dist/snoowrap.js"></script>
 <style>
-.container {
-  max-width: 800px;
-  margin: 0 auto;
+/* Estilos para el encabezado de la página */
+header {
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  z-index: 100;
+}
+
+/* Estilos para la barra de navegación */
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  text-align: center;
+}
+
+nav li {
+  display: inline-block;
+}
+
+nav li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+nav li a:hover {
+  background-color: #111;
+}
+
+/* Estilos para el contenido principal de la página */
+main {
+  margin-top: 60px; /* Ajustar según el tamaño de la barra de navegación */
   padding: 20px;
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-label {
-  margin-top: 10px;
-}
-
-input[type="text"],
-input[type="submit"] {
-  max-width: 100%;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px;
-  margin-top: 5px;
-  font-size: 16px;
-}
-
-input[type="checkbox"] {
-  margin-right: 5px;
-}
-
-input[type="submit"] {
-  max-width: 200px;
-  width: 100%;
-  margin-top: 20px;
-  font-size: 18px;
-}
-
-@media screen and (min-width: 600px) {
-  form {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  .checkbox-group {
-    flex-basis: calc(50% - 5px);
-  }
-
-  input[type="text"],
-  input[type="submit"] {
-    max-width: calc(50% - 5px);
-    margin-top: 0;
-  }
-
-  input[type="submit"] {
-    margin-top: 5px;
-    max-width: 150px;
-    width: auto;
-  }
-}
 
 </style>
   </head>
   <body>
-    <form>
-      <label for="image">Selecciona una imagen:</label>
-      <input type="file" id="image" name="image"><br><br>
+    <header>
+  <nav class="fixed-nav">
+    <ul>
+      <li><a href="#">Inicio</a></li>
+      <li><a href="#">Servicios</a></li>
+      <li><a href="#">Productos</a></li>
+      <li><a href="#">Contacto</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <!-- Contenido de la página aquí -->
+</main>
 
-      <div class="subreddit">
-        <label for="subreddit1">Subreddit 1:</label>
-        <input type="text" id="subreddit1" name="subreddit1">
-        <label for="title1">Título del post:</label>
-        <input type="text" id="title1" name="title1">
-        <label for="tags1">Etiquetas (separadas por comas):</label>
-        <input type="text" id="tags1" name="tags1"><br><br>
-      </div>
-
-      <div class="subreddit">
-        <label for="subreddit2">Subreddit 2:</label>
-        <input type="text" id="subreddit2" name="subreddit2">
-        <label for="title2">Título del post:</label>
-        <input type="text" id="title2" name="title2">
-        <label for="tags2">Etiquetas (separadas por comas):</label>
-        <input type="text" id="tags2" name="tags2"><br><br>
-      </div>
-
-      <button type="submit">Publicar</button>
-    </form>
-
-    <script>
-      const form = document.querySelector('form');
-      form.addEventListener('submit', onSubmit);
-
-      async function onSubmit(event) {
-        event.preventDefault();
-
-        const image = document.getElementById('image').files[0];
-
-        const subreddits = [];
-        const titles = [];
-        const tags = [];
-
-        document.querySelectorAll('.subreddit').forEach((element, index) => {
-          const subreddit = element.querySelector('input[name^="subreddit"]').value;
-          const title = element.querySelector('input[name^="title"]').value;
-          const tagString = element.querySelector('input[name^="tags"]').value;
-
-          if (subreddit && title) {
-            subreddits.push(subreddit);
-            titles.push(title);
-            tags.push(tagString ? tagString.split(',').map(tag => tag.trim()) : []);
-          }
-        });
-
-        if (subreddits.length === 0) {
-          alert('Debes agregar al menos un subreddit y un título.');
-          return;
-        }
-
-        if (!image) {
-          alert('Debes seleccionar una imagen.');
-          return;
-        }
-
-        const client = new snoowrap({
-          userAgent: 'TU_AGENTE_DE_USUARIO',
-          clientId: 'TU_ID_DE_CLIENTE',
-          clientSecret: 'TU_CLAVE_SECRETA_DE_CLIENTE',
-          username: 'TU_NOMBRE_DE_USUARIO',
-          password: 'TU_CONTRASEÑA'
-        });
-
-        for (let i = 0; i < subreddits.length; i++) {
-          const subreddit = subreddits[i];
-          const title = titles[i];
-          const subredditTags = tags[i];
-
-          try {
-            const { url } = await client.uploadMedia({ file: image });
-            const post = await client
-              .getSubreddit(subreddit)
-              .submit({
-                title: title,
-                url: url,
-                sendReplies: true,
-                resubmit: false,
-                captcha: true,
-                sendReplies: true,
-                flair_id: null,
-                flair_text: null,
-                distinguish: null,
-                nsfw: false
-              });
-
-            if (subredditTags.length > 0) {
-              await post.assignFlair({ text: subredditTags.join(', '), cssClass: '' });
-            }
-
-            alert(`Post enviado al subreddit ${subreddit}.`);
-          } catch (error) {
-            console.error(`Error al enviar el post al subreddit ${subreddit}: `, error);
-            alert(`Error al enviar el post al subreddit ${subreddit}: ${error.message}`);
-          }
-        }
-
-        form.reset();
-      }
-    </script>
   </body>
 </html>
 
