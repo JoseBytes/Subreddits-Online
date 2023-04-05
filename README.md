@@ -1,63 +1,27 @@
-# Tabla de contenido
-1. [Descripción](#descripcion)
-2. [Código](#codigo)
-3. [Resultado](#resultado)
+# Subreddits-Online
 
-## Descripción <a name="descripcion"></a>
+## Explicación del código JavaScript
 
-Este código es un ejemplo de JavaScript que recopila el número de usuarios en línea de una lista de subreddits y los muestra en una lista ordenada en una página web.
+Este código es un ejemplo de JavaScript que recopila el número de usuarios en línea de una lista de subreddits y los muestra en una lista ordenada en una página web. En resumen, el código sigue los siguientes pasos:
 
-## Código <a name="codigo"></a>
-
-const subreddits = ['FootFetishExperiences', 'FeetLoversHeaven', 'Feet_NSFW', 'feetpics', 'VerifiedFeet', 'FootFetish', 'Feetishh', 'FeetInYourFace', 'sendfeetpics', 'VIPFeet', 'Rate_my_feet'];
-
-const subredditList = document.getElementById('subreddit-list');
-
-const promises = subreddits.map(subreddit => {
-  return fetch(`https://www.reddit.com/r/${subreddit}/about.json`)
-    .then(response => response.json())
-    .then(data => {
-      return {
-        subreddit: subreddit,
-        onlineUsers: data.data.active_user_count
-      };
-    })
-    .catch(error => console.error(error));
-});
-
-Promise.all(promises).then(results => {
-  results.sort((a, b) => b.onlineUsers - a.onlineUsers);
-  results.forEach(result => {
-    const listItem = document.createElement('li');
-    listItem.textContent = `${result.subreddit}: ${result.onlineUsers} online`;
-    if (result.onlineUsers > 400) {
-      listItem.style.color = 'green';
-    }
-    subredditList.appendChild(listItem);
-  });
-});
-
-function toggleMenu() {
-  var menu = document.getElementById("menu");
-  if (menu.style.display === "block") {
-    menu.style.display = "none";
-  } else {
-    menu.style.display = "block";
-  }
-}
-
-## Resultado <a name="resultado"></a>
+- Define una lista de nombres de subreddits.
+- Busca los datos del subreddit mediante la función `fetch()` y lo almacena en una promesa.
+- Luego, analiza los datos utilizando el método `.json()`.
+- Crea un objeto que incluye el nombre del subreddit y el número de usuarios en línea.
+- Ordena los resultados en orden descendente basado en el número de usuarios en línea.
+- Crea elementos de lista para cada objeto que se ha creado.
+- Añade los elementos de lista a un elemento de lista HTML en la página web.
 
 Un ejemplo del resultado podría ser una lista ordenada que se ve así:
 
-Feet_NSFW: 2282 online
-FootFetish: 1705 online
-FeetLoversHeaven: 1163 online
-VerifiedFeet: 734 online
-FootFetishExperiences: 640 online
-Feetishh: 423 online
-Rate_my_feet: 298 online
-FeetInYourFace: 150 online
-VIPFeet: 125 online
-feetpics: 92 online
-sendfeetpics: 6 online
+1. Feet_NSFW: 2282 online
+2. FootFetish: 1705 online
+3. FeetLoversHeaven: 1163 online
+4. VerifiedFeet: 734 online
+5. FootFetishExperiences: 640 online
+6. Feetishh: 423 online
+7. Rate_my_feet: 298 online
+8. FeetInYourFace: 150 online
+9. VIPFeet: 125 online
+10. feetpics: 92 online
+11. sendfeetpics: 6 online
