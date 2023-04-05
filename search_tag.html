@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Publicaciones de un subreddit</title>
+    <style>
+      /* Estilo para el overlay */
+      body {
+      margin: 20px;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: flex-start;
+			height: 100vh;
+		}
+
+		.form {
+		  margin-top: 15px;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			background-color: #fff;
+			border-radius: 10px;
+			margin: 20px;
+      padding: 20px;
+      border: 1px solid #ccc;
+			/*box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.15);*/
+			width: 320px;
+			
+		}
+
+		.form input[type="text"] {
+			display: block;
+			flex-grow: 1;
+			width: 100%;
+			padding: 10px;
+			margin: 10px 5px;
+			border: 1px solid #ccc;
+			border-radius: 8px;
+			outline: none;
+		}
+
+		.form button {
+			display: block;
+			width: 100%;
+			padding: 10px;
+			background-color: #007aff;
+			color: #fff;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			outline: none;
+			margin: 0px 5px;
+		}
+
+		.form button:hover {
+			background-color: #0062cc;
+		}
+
+    .post {
+      margin: 20px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+
+    .post h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .post p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .post a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #overlay img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+    </style>
+
+  </head>
+  <body>
+    	<div class="container">
+    	  <div class="form">
+    	    <input type="text" id="subreddit-name" placeholder="Subreddit">
+    	    <input type="text" id="flair-text" placeholder="Flair">
+    	    <button onclick="buscarPublicaciones()">Buscar</button>
+    	  </div>
+    
+    <div id="publicaciones"></div>
+    <div id="overlay">
+    <img id="overlay-image" src="">
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      function buscarPublicaciones() {
+        // Obtenemos el nombre del subreddit y el flair a filtrar
+        const subredditName = $('#subreddit-name').val();
+        const flairText = $('#flair-text').val();
+
+        // Construimos la URL de la API de Reddit
+        const url = `https://www.reddit.com/r/${subredditName}/search.json?q=flair_text%3A%22${flairText}%22&restrict_sr=1`;
+
+        // Realizamos la solicitud GET a la API de Reddit
+        $.get(url, function(data) {
+          // Borramos las publicaciones anteriores
+          $('#publicaciones').empty();
+
+          // Iteramos sobre las publicaciones recibidas
+          data.data.children.forEach(function(child) {
+            const post = child.data;
+            
+          const fecha = new Date(post.created * 1000).toLocaleString();
+          
+            // Creamos un elemento HTML para mostrar la publicación
+            const postElement = `
+              <div class="post">
+                <h2>${post.title}</h2>
+                <p>${post.selftext}</p>
+                <p>Creado por <a href="https://www.reddit.com/u/${post.author}" target="_blank">${post.author}</a></p>
+                <p>${fecha}</p>
+                <img src="${post.thumbnail}" onclick="showOverlay('${post.url}')">
+                <p>Votos: ${post.score}</p>
+                <p><a href="https://www.reddit.com${post.permalink}" target="_blank">Ver Publicación</a></p>
+              </div>
+            `;
+            // Agregamos el elemento HTML a la página
+            $('#publicaciones').append(postElement);
+          });
+        });
+      }
+
+          function showOverlay(imageUrl) {
+            const overlay = document.querySelector('#overlay');
+            const overlayImage = document.querySelector('#overlay-image');
+            overlayImage.src = imageUrl;
+            overlay.style.display = 'flex';
+          }
+      
+          function hideOverlay() {
+            const overlay = document.querySelector('#overlay');
+            overlay.style.display = 'none';
+          }
+      
+          document.querySelector('#overlay').addEventListener('click', hideOverlay);
+    </script>
+  </body>
+</html>
